@@ -1,0 +1,4 @@
+oldDoc,newDoc,emailBefore,patchEmail,expectedEmail
+DOC-OLD-1,DOC-NEW-1,a@x.com,NewMail@X.com,newmail@x.com
+DNI-123,DNI-456,USER@MAIL.COM,user@mail.com,user@mail.com
+RUC-9,RUC-9_2, legacy@mail.pe , LEGACY@mail.pe ,legacy@mail.pe

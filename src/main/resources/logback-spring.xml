@@ -1,0 +1,17 @@
+<configuration>
+    <property name="APP" value="${spring.application.name:-app}"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] ${APP} %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- niveles por paquete (ajusta el package raíz) -->
+    <logger name="com.bootcamp" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="reactor" level="WARN"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

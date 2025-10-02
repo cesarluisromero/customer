@@ -1,0 +1,4 @@
+startType,patchType,patchFullName,existingBizName,expectedFullName,expectBusinessNameNull
+ENTERPRISE,PERSONAL,Bob Builder,ACME S.A.,Bob Builder,true
+PERSONAL,PERSONAL,Ana Perez,,Ana Perez,true
+ENTERPRISE,ENTERPRISE,,TECH CORP,,false
