@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/customers")
+@RequestMapping("/customers")
 @Tag(name = "Customer")
 public class CustomerController {
 
@@ -30,6 +30,11 @@ public class CustomerController {
     @GetMapping("/{id}")
     public Mono<CustomerDto> findById(@PathVariable String id){
         return useCase.findById(id).map(CustomerMapper::toDto);
+    }
+
+    @GetMapping("/doc/{number}")
+    public Mono<CustomerDto> findByDocument(@PathVariable("number") String number) {
+        return useCase.findByDocumentNumber(number).map(CustomerMapper::toDto);
     }
 
     @PostMapping

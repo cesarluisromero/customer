@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 public interface CustomerUseCase {
     Flux<Customer> findAll(CustomerType type);     // null -> todos
     Mono<Customer> findById(String id);
+    Mono<Customer> findByDocumentNumber(String documentNumber);
     Mono<Customer> create(Customer customer);
     Mono<Customer> update(String id, Customer customer);
     Mono<Void> delete(String id);

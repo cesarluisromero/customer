@@ -73,20 +73,54 @@ public class CustomerServiceImpl implements CustomerUseCase {
         });
     }
 
-
     @Override
-    public Mono<Customer> create(Customer customer) {
-        return repo.save(customer)
-                .doOnNext(saved -> {
-                    if (nonNull(saved.getId())) {
-                        customerByIdCache.put(saved.getId(), saved);
-                        byIdMonoCache.invalidate(saved.getId());
-                    }
-                    if (nonNull(saved.getDocumentNumber())) {
-                        customerByDocCache.put(saved.getDocumentNumber(), saved);
+    public Mono<Customer> findByDocumentNumber(String documentNumber) {
+        String key = normalizeDoc(documentNumber);
+        if (key == null) return Mono.empty();
+
+        Customer cached = customerByDocCache.getIfPresent(key);
+        if (cached != null) return Mono.just(cached);
+
+        return repo.findByDocumentNumber(key)
+                .doOnNext(c -> {
+                    customerByDocCache.put(key, c);
+                    if (nonNull(c.getId())) {
+                        customerByIdCache.put(c.getId(), c);
+                        byIdMonoCache.invalidate(c.getId()); // evita stale del cache Mono por id
                     }
                 });
     }
+
+    private String normalizeDoc(String doc) {
+        if (doc == null) return null;
+        String s = doc.trim();
+        return s.isEmpty() ? null : s;
+    }
+
+
+
+    @Override
+    public Mono<Customer> create(Customer customer) {
+        String key = normalizeDoc(customer.getDocumentNumber());
+        if (key == null) return Mono.error(new IllegalArgumentException("documentNumber required"));
+
+        return repo.findByDocumentNumber(key).hasElement() // Mono<Boolean>
+                .flatMap(exists -> exists
+                        ? Mono.error(new IllegalStateException("documentNumber already exists"))
+                        : repo.save(customer)
+                        .doOnNext(saved -> {
+                            if (saved.getId() != null) {
+                                customerByIdCache.put(saved.getId(), saved);
+                                byIdMonoCache.invalidate(saved.getId());
+                            }
+                            if (saved.getDocumentNumber() != null) {
+                                customerByDocCache.put(saved.getDocumentNumber(), saved);
+                            }
+                        })
+                );
+    }
+
+
 
 
     @Override
